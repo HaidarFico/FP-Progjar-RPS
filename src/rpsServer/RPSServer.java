@@ -52,7 +52,7 @@ public class RPSServer{
 				System.err.println("A user has disconnected, waiting 5 seconds then restarting the server...");
 			}
 			catch(NumberFormatException e1) {
-				System.err.println("Incorrect number input");
+				System.err.println("Incorrect number input!");
 				e1.printStackTrace();
 				System.exit(1);
 			}	
@@ -63,13 +63,13 @@ public class RPSServer{
 			}
 			catch(TooManyListenersException e3)
 			{
-				System.err.println("The room is filled");
+				System.err.println("The room is filled!");
 				clientSocket.close();
 				e3.printStackTrace();
 			}
 			catch(InvalidKeyException e4)
 			{
-				System.err.println("The room is filled");
+				System.err.println("The room is filled!");
 				clientSocket.close();
 				e4.printStackTrace();
 			}
