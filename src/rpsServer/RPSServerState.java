@@ -9,7 +9,8 @@ public class RPSServerState {
 	
 	private int[] RoomOccupation = new int[10];
 	private ArrayList<RPSRoomThread> roomList = new ArrayList<RPSRoomThread>();
-	
+	private int roomNumber;
+
 	public RPSServerState() 
 	{
 		for(int i = 0; i < 10; i++)
@@ -21,6 +22,7 @@ public class RPSServerState {
 	
 	public void removeRoom(int roomNumber)
 	{
+		this.roomNumber = roomNumber;
 		if(roomList.get(roomNumber - 1) == null)
 		{
 			throw new IndexOutOfBoundsException("Index is out of bounds. The room list is already empty.");
@@ -44,19 +46,18 @@ public class RPSServerState {
 	}
 	
 	public boolean isRoomAvailable(int roomNumber) {
-		if(roomNumber < 1 || roomNumber > 10)
-		{
-			return false;
+		boolean result = false;
+		if (roomNumber >= 1 && roomNumber <= 10) {
+			if (this.getRoomOccupation()[roomNumber - 1] <= 1) {
+				result = true;
+			}
 		}
-		if(this.getRoomOccupation()[roomNumber - 1] > 1)
-		{
-			return false;
-		}
-		return true;
+		return result;
 	}
 	
 	public void addOccupant(int roomNumber) throws InvalidKeyException
 	{
+		this.roomNumber = roomNumber;
 		if(this.RoomOccupation[roomNumber - 1] > 1)
 		{
 			throw new InvalidKeyException("Room Occupants is full");
@@ -66,6 +67,7 @@ public class RPSServerState {
 	
 	public void removeOccupant(int roomNumber) throws InvalidKeyException
 	{
+		this.roomNumber = roomNumber;
 		if(this.RoomOccupation[roomNumber - 1] < 1)
 		{
 			throw new InvalidKeyException("Room Occupants is empty");
