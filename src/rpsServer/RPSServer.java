@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 //Each player will be assigned to a server thread, will also start the rock paper scissors game
 
 public class RPSServer{
-	
-	public static void main(String[] args) throws IOException, InterruptedException {
+
+	public static void main(String[] args) throws IOException, InterruptedException, Exception {
 		System.out.println("Please enter the port number that you wish to use:");
 		Scanner sc = new Scanner(System.in);
 		int portNumber = sc.nextInt();
@@ -29,50 +29,38 @@ public class RPSServer{
 		Socket clientSocket = null;
 		boolean loopStatus = true;		
 		sc.close();
-		
-		try {
-			chatServer.ChatServer chatServer = new chatServer.ChatServer();
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		while(loopStatus) {
-			try 
-			{
-				System.out.println("Listening to requests...");				
-				clientSocket = serverSocket.accept();
-				System.out.println("A user with the ip of " + clientSocket.getInetAddress() + " has connected!");
-				RPSRoomThread roomThread = RPSServerProtocol.acceptClientHandler(serverState, clientSocket);
-				if(roomThread != null)
-				{
-					roomThread.start();
+
+		chatServer.ChatServer chatServer = new chatServer.ChatServer();
+		if (loopStatus) {
+			do {
+				try {
+					System.out.println("Listening to requests...");
+					clientSocket = serverSocket.accept();
+					System.out.println("A user with the ip of " + clientSocket.getInetAddress() + " has connected!");
+					RPSRoomThread roomThread = RPSServerProtocol.acceptClientHandler(serverState, clientSocket);
+					if (roomThread != null) {
+						roomThread.start();
+					}
+				} catch (IOException e) {
+					System.err.println("A user has disconnected, waiting 5 seconds then restarting the server...");
+				} catch (NumberFormatException e1) {
+					System.err.println("Incorrect number input!");
+					e1.printStackTrace();
+					System.exit(1);
+				} catch (IllegalArgumentException e2) {
+					System.err.println("An illegal argument has been entered in the serverOutput method");
+					e2.printStackTrace();
+					System.exit(1);
+				} catch (TooManyListenersException e3) {
+					System.err.println("The room is filled!");
+					clientSocket.close();
+					e3.printStackTrace();
+				} catch (InvalidKeyException e4) {
+					System.err.println("The room is filled!");
+					clientSocket.close();
+					e4.printStackTrace();
 				}
-			}
-			catch(IOException e) {
-				System.err.println("A user has disconnected, waiting 5 seconds then restarting the server...");
-			}
-			catch(NumberFormatException e1) {
-				System.err.println("Incorrect number input!");
-				e1.printStackTrace();
-				System.exit(1);
-			}	
-			catch(IllegalArgumentException e2) {
-				System.err.println("An illegal argument has been entered in the serverOutput method"); 
-				e2.printStackTrace();
-				System.exit(1);
-			}
-			catch(TooManyListenersException e3)
-			{
-				System.err.println("The room is filled!");
-				clientSocket.close();
-				e3.printStackTrace();
-			}
-			catch(InvalidKeyException e4)
-			{
-				System.err.println("The room is filled!");
-				clientSocket.close();
-				e4.printStackTrace();
-			}
+			} while (loopStatus);
 		}
 			sc.close();
 			serverSocket.close();
